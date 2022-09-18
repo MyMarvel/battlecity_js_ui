@@ -5,6 +5,7 @@ import BrickWall from './brick-wall.js';
 import SteelWall from './steel-wall.js';
 import PlayerTank from './player-tank.js';
 import EnemyTank from './enemy-tank.js';
+import Network from './network.js';
 
 export default class Stage extends EventEmitter {
     static createObject(type, args) {
@@ -49,6 +50,7 @@ export default class Stage extends EventEmitter {
         this.enemyTankCount = 0;
         this.enemyTankTimer = 0;
         this.enemyTankPositionIndex = 0;
+        this.network = new Network();
 
         this.objects = new Set([
             this.base,
@@ -110,7 +112,17 @@ export default class Stage extends EventEmitter {
             });
 
             enemyTank.on('destroyed', () => this.removeEnemyTank(enemyTank));
+
+            this.playerTank.on('moved', tank => {
+                // TODO: Send needed params to draw this tank
+                this.network.send(JSON.stringify({
+                    isDestroyed: tank.isDestroyed,
+                    speed: tank.speed,
+                    direction: tank.direction
+                }));
+            });
         });
+
     }
 
     get width() {

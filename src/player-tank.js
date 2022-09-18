@@ -28,6 +28,8 @@ export default class PlayerTank extends Tank {
 
             if (isOutOfBounds || hasCollision) {
                 this.move(axis, -value);
+            } else {
+                this.emit('moved', this);
             }
         }
 

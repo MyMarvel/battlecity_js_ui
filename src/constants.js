@@ -153,3 +153,14 @@ export const PLAYER1_LIVES_SPRITES = [
 export const ENEMY_TANK_ICONS_SPRITES = [
     [18 * UNIT_SIZE, 5.5 * UNIT_SIZE, TILE_SIZE, UNIT_SIZE],
 ];
+
+export const STOMP_CREDENTIALS = {
+    user: 'test',
+    pass: 'test',
+    url: 'ws://127.0.0.1:15674/ws',
+}
+
+export const RABBITMQ_CHANNELS = {
+    tank1: '/topic/tank1',
+    tank2: '/topic/tank2',
+}

@@ -1,9 +1,10 @@
-import { STAGE_SIZE, TILE_SIZE, TerrainType } from './constants.js';
+import { STAGE_SIZE, TILE_SIZE, TerrainType, ENABLE_SECOND_PLAYER } from './constants.js';
 import EventEmitter from './event-emitter.js';
 import Base from './base.js';
 import BrickWall from './brick-wall.js';
 import SteelWall from './steel-wall.js';
-import PlayerTank from './player-tank.js';
+import Player1Tank from './player1-tank.js';
+import Player2Tank from './player2-tank.js';
 import EnemyTank from './enemy-tank.js';
 import Network from './network.js';
 
@@ -44,7 +45,8 @@ export default class Stage extends EventEmitter {
         super();
 
         this.base = new Base();
-        this.playerTank = new PlayerTank();
+        this.player1Tank = new Player1Tank();
+        this.player2Tank = new Player2Tank();
         this.enemyTanks = Stage.createEnemies(data.enemies);
         this.terrain = Stage.createTerrain(data.map);
         this.enemyTankCount = 0;
@@ -54,9 +56,13 @@ export default class Stage extends EventEmitter {
 
         this.objects = new Set([
             this.base,
-            this.playerTank,
+            this.player1Tank,
             ...this.terrain
         ]);
+
+        if (ENABLE_SECOND_PLAYER) {
+            this.objects.add(this.player2Tank);
+        }
 
         this.init();
     }
@@ -66,7 +72,7 @@ export default class Stage extends EventEmitter {
             this.emit('gameOver');
         });
 
-        this.playerTank.on('fire', bullet => {
+        var playerTankFireFunc = bullet => {
             this.objects.add(bullet);
 
             bullet.on('explode', explosion => {
@@ -80,9 +86,14 @@ export default class Stage extends EventEmitter {
             bullet.on('destroyed', () => {
                 this.objects.delete(bullet);
             });
-        });
+        }
+        this.player1Tank.on('fire', playerTankFireFunc);
+        this.player2Tank.on('fire', playerTankFireFunc);
 
-        this.playerTank.on('destroyed', tank => {
+        this.player1Tank.on('destroyed', tank => {
+            this.objects.delete(tank);
+        });
+        this.player2Tank.on('destroyed', tank => {
             this.objects.delete(tank);
         });
 

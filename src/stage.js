@@ -6,7 +6,7 @@ import SteelWall from './steel-wall.js';
 import Player1Tank from './player1-tank.js';
 import Player2Tank from './player2-tank.js';
 import EnemyTank from './enemy-tank.js';
-import Network from './network.js';
+import Input from './input.js';
 
 export default class Stage extends EventEmitter {
     static createObject(type, args) {
@@ -41,18 +41,25 @@ export default class Stage extends EventEmitter {
         return types.map(type => new EnemyTank({ type }));
     }
 
-    constructor(data) {
+    constructor(data, network) {
         super();
 
         this.base = new Base();
-        this.player1Tank = new Player1Tank();
-        this.player2Tank = new Player2Tank();
+
+        let player1Controls = Input.getPlayer1Controls()
+        let player2Controls = Input.getPlayer2Controls()
+        if (network && !network.isHost) {
+            player1Controls = Input.getNoControls()
+            player2Controls = Input.getPlayer1Controls()
+        }
+        this.player1Tank = new Player1Tank(player1Controls);
+        this.player2Tank = new Player2Tank(player2Controls);
         this.enemyTanks = Stage.createEnemies(data.enemies);
         this.terrain = Stage.createTerrain(data.map);
         this.enemyTankCount = 0;
         this.enemyTankTimer = 0;
         this.enemyTankPositionIndex = 0;
-        this.network = new Network();
+        this.network = network;
 
         this.objects = new Set([
             this.base,
@@ -124,13 +131,8 @@ export default class Stage extends EventEmitter {
 
             enemyTank.on('destroyed', () => this.removeEnemyTank(enemyTank));
 
-            this.playerTank.on('moved', tank => {
+            this.player1Tank.on('moved', tank => {
                 // TODO: Send needed params to draw this tank
-                this.network.send(JSON.stringify({
-                    isDestroyed: tank.isDestroyed,
-                    speed: tank.speed,
-                    direction: tank.direction
-                }));
             });
         });
 

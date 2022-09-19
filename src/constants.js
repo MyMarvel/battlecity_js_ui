@@ -184,8 +184,15 @@ export const STOMP_CREDENTIALS = {
 }
 
 export const RABBITMQ_CHANNELS = {
+    generatedGameSession: '/topic/someGame1',
     tank1: '/topic/tank1',
     tank2: '/topic/tank2',
 }
 
 export const ENABLE_SECOND_PLAYER = true;
+export const ENABLE_NETWORK = true;
+
+export const ACTION_TYPES = {
+    MOVEMENT: 'Movement',
+    FIRE: 'Fire'
+}

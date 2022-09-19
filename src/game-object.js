@@ -2,18 +2,6 @@ import { Key, Direction } from './constants.js';
 import EventEmitter from './event-emitter.js';
 
 export default class GameObject extends EventEmitter {
-    static getDirectionForKeys(keys) {
-        if (keys.has(Key.PLAYER1_UP) || keys.has(Key.PLAYER2_UP)) {
-            return Direction.UP;
-        } else if (keys.has(Key.PLAYER1_RIGHT) || keys.has(Key.PLAYER2_RIGHT)) {
-            return Direction.RIGHT;
-        } else if (keys.has(Key.PLAYER1_DOWN) || keys.has(Key.PLAYER2_DOWN)) {
-            return Direction.DOWN;
-        } else if (keys.has(Key.PLAYER1_LEFT) || keys.has(Key.PLAYER2_LEFT)) {
-            return Direction.LEFT;
-        }
-    }
-
     static getAxisForDirection(direction) {
         return direction % 2 === 0 ? 'y' : 'x';
     }

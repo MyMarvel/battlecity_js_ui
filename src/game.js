@@ -1,5 +1,7 @@
 import stages from './stages.js';
 import Stage from './stage.js';
+import Network from './network.js';
+import { ENABLE_NETWORK } from './constants.js'
 
 export default class Game {
     constructor({ input, view }) {
@@ -12,6 +14,7 @@ export default class Game {
         this.stageIndex = 0;
         this.frames = 0;
         this.lastFrame = 0;
+        this.network = ENABLE_NETWORK ? new Network() : null;
 
         this.loop = this.loop.bind(this);
         this.onGameOver = this.onGameOver.bind(this);
@@ -19,10 +22,13 @@ export default class Game {
 
     async init() {
         await this.view.init();
+        if (ENABLE_NETWORK) {
+            await this.network.init();
+        }
     }
 
     start() {
-        this.stage = new Stage(stages[this.stageIndex]);
+        this.stage = new Stage(stages[this.stageIndex], this.network);
         this.stage.number = this.stageIndex + 1;
         this.stage.on('gameOver', this.onGameOver);
 

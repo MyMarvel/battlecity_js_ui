@@ -8,17 +8,18 @@ services:
       - RABBITMQ_USERNAME=myuser
       - RABBITMQ_PASSWORD=mypass
       - RABBITMQ_ADVANCED_CONFIG_FILE=/etc/rabbitmq/advanced.config
-      - RABBITMQ_PLUGINS=rabbitmq_web_stomp,rabbitmq_stomp,rabbitmq_web_stomp_examples,rabbitmq_management,rabbitmq_management_agent
+      - RABBITMQ_PLUGINS=rabbitmq_web_stomp,rabbitmq_stomp,rabbitmq_web_stomp_examples,rabbitmq_management,rabbitmq_management_agent,rabbitmq_stream,rabbitmq_stream_management
     ports:
       - 1883:1883
       - 4369:4369
+      - 5552:5552 #stream
       - 5671:5671
       - 5672:5672
       - 8883:8883
-      - 15670:15670
+      - 15670:15670 #management
       - 15672:15672
-      - 15674:15674
-      - 15675:15675
+      - 15674:15674 #stomp
+      - 15675:15675 #standard
     volumes:
       - ../docker/rabbitmq/rabbitmq-persistence:/bitnami
       - ../docker/rabbitmq/advanced-rabbitmq.config:/etc/rabbitmq/advanced.config
